@@ -10,22 +10,22 @@ class Chart
 	* @var int Canvas' width, without legend. Default to 1000
 	**/
 	const CANVAS_WIDTH_WITHOUT_LEGEND = 1000;
-	
+
 	/**
 	* @var int Canvas' height, without legend. Default to 300
 	**/
 	const CANVAS_HEIGHT_WITHOUT_LEGEND = 300;
-	
+
 	/**
 	* @var int Canvas' width, with legend. Default to 500
 	**/
 	const CANVAS_WIDTH_WITH_LEGEND = 500;
-	
+
 	/**
 	* @var int Canvas' width, with legend. Default to 300
 	**/
 	const CANVAS_HEIGHT_WITH_LEGEND = 300;
-	
+
 	/**
 	* @var string Title of the legend block
 	**/
@@ -35,62 +35,62 @@ class Chart
 	* @var string $type Type of the chart. Could be : 'doughnut', 'polar', 'bar', 'pie', 'line', 'radar'
 	**/
 	private $type;
-	
+
 	/**
 	* @var string $divName The ID of the div where the chart will go
 	**/
 	private $divName;
-	
+
 	/**
 	* @var array $data Our data. Multidimensionnal array or not.
 	**/
 	private $data;
-	
+
 	/**
 	* @var array $legend Data for the abscisse axis.
 	**/
 	private $legend;
-	
+
 	/**
 	* @var array $legendData If you don't want to use data from the abscisse axis for the legend, you should specify your legend here.
 	**/
 	private $legendData;
-	
+
 	/**
-	* @var string $options Chart's options. See http://www.chartjs.org for available options 
+	* @var string $options Chart's options. See http://www.chartjs.org for available options
 	**/
 	private $options;
-	
+
 	/**
 	* @var array $colors Multiple values of hexadecimal colors (example : #FFFFFF). They will be used for your charts. If you do not specify them, a default color array will be used.
 	**/
 	private $colors;
-	
+
 	/**
 	* @var boolean $displayLegend Do we need to display a legend for the chart or not?
 	*/
 	private $displayLegend = false;
-	
+
 	/**
 	* @var boolean $legendIsPercentage Indicates whether the legend should be displayed as a percentage
 	**/
 	private $legendIsPercentage = false;
-	
+
 	/**
 	* @var int $maxColorKey The maximal key value of the colors array
 	**/
 	static $maxColorKey = 0;
-	
+
 	/**
 	* @var int $numberCurrentColorKey The last key value of the colors array that we have used
 	**/
 	static $numberCurrentColorKey = 0;
-	
+
 	/**
 	* @var boolean $hasLoopedThroughColors Do we have already looped through the colors array?
 	*/
 	static $hasLoopedThroughColors = false;
-	
+
 	/**
 	* @var int $beginningKeyForData The key number with which we began our chart
 	*/
@@ -111,7 +111,7 @@ class Chart
 			self::set('type', $type);
 		else
 			throw new \InvalidArgumentException("The chart type is not supported.", 1);
-			
+
 
 		// Colors
 		if (is_null($colors))
@@ -120,12 +120,14 @@ class Chart
 			self::set('colors', $colors);
 
 		self::set('divName', $divName);
-		
+
 		// Default options
 		if ($type != 'bar' AND is_null($options))
 			self::set('options', 'null');
 		if ($type == 'bar' AND is_null($options))
 			self::set('options', '{scaleFontColor: "#767C8D", scaleGridLineColor: "rgba(0,0,0,.2)"}');
+		else
+			self::set('options', $options);
 	}
 
 	/**
@@ -159,7 +161,7 @@ class Chart
 
 			// If we have multiple datasets
 			if (self::isMultidimensionalArray($this->data)) {
-				
+
 				// Let's check the dimension of each dataset
 				foreach ($this->data as $dataset) {
 					if (count($dataset) != count($this->legend))
@@ -205,7 +207,7 @@ class Chart
 	}
 
 	/**
-	* Return the HTML code for the legend of the chart. If your chart is a bar chart, you can specify a different legend from the x-axis by using using 'legendData' 
+	* Return the HTML code for the legend of the chart. If your chart is a bar chart, you can specify a different legend from the x-axis by using using 'legendData'
 	* @author Antoine AUGUSTI
 	* @throws \InvalidArgumentException
 	* @return string The HTML code for the legend of the chart
@@ -226,11 +228,11 @@ class Chart
 
 			foreach ($this->data as $datum) {
 				$color = self::getNextColor();
-				
+
 				// We do not display zeros'
 				if ($datum != 0)
 					$html .= '<li><div class="colorBlock" style="background-color:'.$color.'"></div>'.$this->legend[$i].'<span class="floatRight">'.$datum.$percentage.'</span></li>';
-				
+
 				$i++;
 			}
 
@@ -240,7 +242,7 @@ class Chart
 		}
 		// Bar or line
 		elseif (in_array($this->type, array('bar', 'line')) AND (!empty($this->legend) OR !empty($this->legendData)) AND !empty($this->data)) {
-			
+
 			$legends = (!empty($this->legendData)) ? $this->legendData : $this->legend;
 			$html = '<ul class="chartLegend">';
 
@@ -280,7 +282,7 @@ class Chart
 		}
 
 		$html .= '<div class="clearBoth"></div><script>'.$jsCode.'</script>';
-		
+
 		return $html;
 	}
 
@@ -297,10 +299,10 @@ class Chart
 			$hex_R = substr($color, 1, 2);
 			$hex_G = substr($color, 3, 2);
 			$hex_B = substr($color, 5, 2);
-			
+
 			return hexdec($hex_R).",".hexdec($hex_G).",".hexdec($hex_B);
 		}
-		else 
+		else
 			throw new \InvalidArgumentException($color." is not an hexadecimal color code.", 1);
 	}
 
@@ -413,7 +415,7 @@ class Chart
 			case 'radar':
 				return 'Radar';
 				break;
-			
+
 			default:
 				return false;
 				break;
@@ -454,7 +456,7 @@ class Chart
 
 		if ($key == 'colors') {
 			if (is_array($value) AND !self::isMultidimensionalArray($value)) {
-				
+
 				foreach ($value as $color)  {
 					if (!self::isHexadecimalColor($color))
 						throw new \InvalidArgumentException($color.' is not an hexadecimal color.', 1);
