@@ -195,13 +195,50 @@ class Chart
 			$js .= ']};';
 		}
 
-		$js .= '
-		chart'.$this->divName.'();
+		/**
+		 * Temporary fix to add horizontal line
+		 * to barchart
+		 * @todo  submit PR to charjs
+		 */
+		if( $this->type == 'bar' ){
+			$js .= '
+	        chart'.$this->divName.'();
 
-		function chart'.$this->divName.'(){
-			var ctx = document.getElementById("'.$this->divName.'").getContext("2d");
-			new Chart(ctx).'.self::chartNameJS().'(data,'.$this->options.');
-		};';
+	        function chart'.$this->divName.'(){
+	            var ctx = document.getElementById("'.$this->divName.'").getContext("2d");
+	            Chart.types.Bar.extend({
+	                name: "BarWithYLine",
+	                draw: function () {
+	                    Chart.types.Bar.prototype.draw.apply(this, arguments);
+
+	                    var scale = this.scale
+	                    var ctx = this.chart.ctx;
+	                    // calculate using the scale
+	                    var y = scale.calculateY(this.options.lineAtValue);
+
+	                    // draw line
+	                    ctx.save();
+	                    ctx.strokeStyle = "#ff0000";
+	                    ctx.beginPath();
+	                    ctx.moveTo(Math.round(scale.xScalePaddingLeft), y);
+	                    ctx.lineTo(this.chart.width, y);
+	                    ctx.stroke();
+	                    ctx.restore();
+	                }
+	            });
+	            new Chart(ctx).BarWithYLine(data,'.$this->options.');
+	        };';
+		} else {
+			$js .= '
+			chart'.$this->divName.'();
+
+			function chart'.$this->divName.'(){
+				var ctx = document.getElementById("'.$this->divName.'").getContext("2d");
+				new Chart(ctx).'.self::chartNameJS().'(data,'.$this->options.');
+			};';
+		}
+
+
 
 		return $js;
 	}
