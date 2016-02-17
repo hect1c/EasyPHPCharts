@@ -218,7 +218,7 @@ class Chart
 
 	                    // draw line
 	                    ctx.save();
-	                    ctx.strokeStyle = "#ff0000";
+	                    ctx.strokeStyle = "#ff9999";
 	                    ctx.beginPath();
 	                    ctx.moveTo(Math.round(scale.xScalePaddingLeft), y);
 	                    ctx.lineTo(this.chart.width, y);
