@@ -1,11 +1,11 @@
 {
-    "name": "antoineaugusti/easyphpcharts",
+    "name": "hect1c/easyphpcharts",
     "type": "library",
     "description": "A PHP class for chartjs.org charts.",
     "keywords": ["charts", "chart", "php charts", "visualization", "chartjs"],
-    "homepage": "https://github.com/AntoineAugusti/EasyPHPCharts",
+    "homepage": "https://github.com/hect1c/EasyPHPCharts",
     "license": "MIT",
-    "authors": [      
+    "authors": [
         {
             "name":"Antoine Augusti",
             "email":"antoine.augusti@gmail.com",
